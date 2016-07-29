@@ -5,7 +5,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.AppCompatButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,70 +24,51 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by Ghost on 7/29/2016.
  */
-public class Register extends android.app.Fragment implements View.OnClickListener {
+public class Login extends android.app.Fragment implements View.OnClickListener {
 
-    private AppCompatButton btn_register;
-    private EditText et_email,et_password,et_name,et_username,et_cpassword;
-    private TextView tv_login;
+    private AppCompatButton btn_login;
+    private EditText et_email,et_password;
+    private TextView tv_register;
     private ProgressBar progress;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_register,container,false);
+        View view = inflater.inflate(R.layout.fragment_login,container,false);
         initViews(view);
         return view;
     }
 
-    private void initViews(View view){
+    private void initViews(View view) {
 
-        btn_register = (AppCompatButton)view.findViewById(R.id.btn_register);
-        tv_login = (TextView)view.findViewById(R.id.tv_login);
-        et_name = (EditText)view.findViewById(R.id.et_name);
+        btn_login = (AppCompatButton)view.findViewById(R.id.btn_login);
+        tv_register = (TextView)view.findViewById(R.id.tv_register);
         et_email = (EditText)view.findViewById(R.id.et_email);
-        et_username = (EditText)view.findViewById(R.id.et_username);
         et_password = (EditText)view.findViewById(R.id.et_password);
-        et_cpassword = (EditText)view.findViewById(R.id.et_cpassword);
-
         progress = (ProgressBar)view.findViewById(R.id.progress);
 
-        btn_register.setOnClickListener(this);
-        tv_login.setOnClickListener(this);
+        btn_login.setOnClickListener(this);
+        tv_register.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
 
         switch (v.getId()){
-            case R.id.tv_login:
-                goToLogin();
+
+            case R.id.tv_register:
+                goToRegister();
                 break;
 
-            case R.id.btn_register:
-
-                String name = et_name.getText().toString();
-                String email = et_email.getText().toString();
-                String username = et_username.getText().toString();
+            case R.id.btn_login:
+                String username = et_email.getText().toString();
                 String password = et_password.getText().toString();
-                String cpassword = et_cpassword.getText().toString();
 
-                if(!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !username.isEmpty() && !cpassword.isEmpty()) {
+                if(!username.isEmpty() && !password.isEmpty()) {
 
-                    if(email.contains("@") && email.contains(".")){
-                        if(cpassword.equals(password)){
-                            if(password.length() >= 6) {
-                                progress.setVisibility(View.VISIBLE);
-                                registerProcess(name, email, password, username);
-                            }else{
-                                Snackbar.make(getView(), "Passwords too Short !", Snackbar.LENGTH_LONG).show();
-                            }
-                        }else{
-                            Snackbar.make(getView(), "Passwords Doesn't Match !", Snackbar.LENGTH_LONG).show();
-                        }
-                    }else{
-                        et_email.requestFocus();
-                        Snackbar.make(getView(), "Invalid Email !", Snackbar.LENGTH_LONG).show();
-                    }
+                    progress.setVisibility(View.VISIBLE);
+                    loginProcess(username,password);
+
                 } else {
 
                     Snackbar.make(getView(), "Fields are empty !", Snackbar.LENGTH_LONG).show();
@@ -96,27 +76,24 @@ public class Register extends android.app.Fragment implements View.OnClickListen
                 break;
 
         }
-
+    
     }
 
-    private void registerProcess(String name, String email,String password, String username){
+    private void loginProcess(String username, String password) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        RegisterInterface requestInterface = retrofit.create(RegisterInterface.class);
+        LoginInterface requestInterface = retrofit.create(LoginInterface.class);
 
         User user = new User();
-        user.setName(name);
-        user.setEmail(email);
         user.setUsername(username);
         user.setPassword(password);
         ServerRequest request = new ServerRequest();
         request.setUser(user);
-
-Call<ServerResponse> response = requestInterface.operation(request);
+        Call<ServerResponse> response = requestInterface.operation(request);
 
         response.enqueue(new Callback<ServerResponse>() {
             @Override
@@ -131,19 +108,18 @@ Call<ServerResponse> response = requestInterface.operation(request);
             public void onFailure(Call<ServerResponse> call, Throwable t) {
 
                 progress.setVisibility(View.INVISIBLE);
-                Log.d(Constants.TAG,"failed");
                 Snackbar.make(getView(), t.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
-
 
             }
         });
     }
 
-    private void goToLogin(){
+    private void goToRegister(){
 
-        Fragment login = new Login();
+        Fragment register = new Register();
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_frame,login);
+        ft.replace(R.id.fragment_frame,register);
         ft.commit();
     }
+
 }

@@ -70,23 +70,23 @@ module.exports = {
 				if(docs){
 					if(passwordHash.verify(user.password, docs.password)){
 						
-						res.send('Login Successfull ! Welcome ' + docs.name);						
+						res.json({message : 'Login Successfull ! Welcome ' + docs.name});						
 						
 					}else{
-						res.send('Incorrect password')
+						res.json({message : 'Incorrect password'});
 					}
 				}else{
 					accounts.findOne({ email: user.username },function (err, docs) {
 						if(docs){
 							if(passwordHash.verify(user.password, docs.password)){
 								
-								res.send('Login Successfull ! Welcome ' + docs.name);						
+								res.json({message : 'Login Successfull ! Welcome ' + docs.name});						
 								
 							}else{
-								res.send('Incorrect password')
+								res.json({message : 'Incorrect password'});
 							}
 						}else{
-							res.send('Email or Username Not Found');
+							res.json({message : 'Email or Username not found !'});
 						}
 					});
 					

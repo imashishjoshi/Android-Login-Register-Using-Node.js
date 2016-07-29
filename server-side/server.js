@@ -6,16 +6,6 @@ var fun = require('./function');
 var app = express();
 app.use(bodyParser.json());
 
-app.post('/login' , function(req,res){
-
-	var user = req.body.user;
-	res.json({message: 'i get a login message'});
-});
-
-app.get('/' , function(req,res){	
-	res.json({message: 'i get a message'});
-});
-
 app.post('/register',function(req,res){
 
 	var user = req.body.user;
