@@ -32,5 +32,27 @@ app.post('/register',function(req,res){
 
 });
 
+app.post('/login', function(req,res){
+
+	var user = req.body.user;
+
+	if(user.username && user.password){
+
+		var password = user.password;
+		var username = user.username.toLowerCase();
+
+		var usr = {
+			
+			'password' : password,				
+			'username' : username
+		}
+		
+		fun.login(usr,res);		
+
+	}
+	
+
+});
+
 app.listen('80');
 console.log('Server Started');

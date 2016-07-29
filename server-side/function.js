@@ -1,5 +1,6 @@
 var MongoDB 	= require('mongodb').Db;
 var Server 		= require('mongodb').Server;
+var passwordHash = require('password-hash');
 
 var dbName = 'login-register';
 var dbHost = 'localhost'
@@ -60,5 +61,37 @@ module.exports = {
 			}
 		});	
 
+	},
+
+	login : function(user,res){
+		accounts.findOne({ username: user.username },function (err, docs) {
+
+			if(!err){
+				if(docs){
+					if(passwordHash.verify(user.password, docs.password)){
+						
+						res.send('Login Successfull ! Welcome ' + docs.name);						
+						
+					}else{
+						res.send('Incorrect password')
+					}
+				}else{
+					accounts.findOne({ email: user.username },function (err, docs) {
+						if(docs){
+							if(passwordHash.verify(user.password, docs.password)){
+								
+								res.send('Login Successfull ! Welcome ' + docs.name);						
+								
+							}else{
+								res.send('Incorrect password')
+							}
+						}else{
+							res.send('Email or Username Not Found');
+						}
+					});
+					
+				}	
+			}	
+		});
 	}
 }	
