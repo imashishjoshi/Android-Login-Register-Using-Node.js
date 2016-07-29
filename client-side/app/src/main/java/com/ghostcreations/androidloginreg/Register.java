@@ -72,14 +72,21 @@ public class Register extends android.app.Fragment implements View.OnClickListen
 
                 if(!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !username.isEmpty() && !cpassword.isEmpty()) {
 
-                    if(cpassword.equals(password)){
-                        progress.setVisibility(View.VISIBLE);
-                        registerProcess(name,email,password,username);
+                    if(email.contains("@") && email.contains(".")){
+                        if(cpassword.equals(password)){
+                            if(password.length() >= 6) {
+                                progress.setVisibility(View.VISIBLE);
+                                registerProcess(name, email, password, username);
+                            }else{
+                                Snackbar.make(getView(), "Passwords too Short !", Snackbar.LENGTH_LONG).show();
+                            }
+                        }else{
+                            Snackbar.make(getView(), "Passwords Doesn't Match !", Snackbar.LENGTH_LONG).show();
+                        }
                     }else{
-                        Snackbar.make(getView(), "Passwords Doesn't Match !", Snackbar.LENGTH_LONG).show();
+                        et_email.requestFocus();
+                        Snackbar.make(getView(), "Invalid Email !", Snackbar.LENGTH_LONG).show();
                     }
-
-
                 } else {
 
                     Snackbar.make(getView(), "Fields are empty !", Snackbar.LENGTH_LONG).show();
