@@ -34,30 +34,30 @@ module.exports = {
 
 								if(!err){
 
-									res.send('User Registered');
+									res.json({message : 'User Registered'});
 
 
 								}else{
 
-									res.send('Problem While User Registered');
+									res.json({message : 'Problem While User Register'});
 								}
 
 							});	
 
 						}else{
-							res.send('Username Already Taken');
+							res.json({message : 'Username Already Taken'});
 						}
 					});
 
 
 
 				}else{
-					res.send('Email Already Registered');
+					res.json({message : 'Email Already Registered'});
 				}
 
 			}else{
 
-				res.send('Database Error' + err);
+				res.send('Database Error');
 			}
 		});	
 

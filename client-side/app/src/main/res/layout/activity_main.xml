@@ -13,10 +13,16 @@
         android:layout_height="match_parent"
         tools:context="com.ghostcreations.androidloginreg.MainActivity">
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
         <FrameLayout
             android:id="@+id/fragment_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+        </ScrollView>
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

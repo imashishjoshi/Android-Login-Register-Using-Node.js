@@ -3,12 +3,22 @@ package com.ghostcreations.androidloginreg;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.ghostcreations.androidloginreg.models.ServerRequest;
+import com.ghostcreations.androidloginreg.models.ServerResponse;
+import com.ghostcreations.androidloginreg.models.User;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Ghost on 7/29/2016.
@@ -64,7 +74,7 @@ public class Register extends android.app.Fragment implements View.OnClickListen
 
                     if(cpassword.equals(password)){
                         progress.setVisibility(View.VISIBLE);
-                       // registerProcess(name,email,password,username);
+                        registerProcess(name,email,password,username);
                     }else{
                         Snackbar.make(getView(), "Passwords Doesn't Match !", Snackbar.LENGTH_LONG).show();
                     }
@@ -78,5 +88,45 @@ public class Register extends android.app.Fragment implements View.OnClickListen
 
         }
 
+    }
+
+    private void registerProcess(String name, String email,String password, String username){
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RegisterInterface requestInterface = retrofit.create(RegisterInterface.class);
+
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setUsername(username);
+        user.setPassword(password);
+        ServerRequest request = new ServerRequest();
+        request.setUser(user);
+
+Call<ServerResponse> response = requestInterface.operation(request);
+
+        response.enqueue(new Callback<ServerResponse>() {
+            @Override
+            public void onResponse(Call<ServerResponse> call, retrofit2.Response<ServerResponse> response) {
+
+                ServerResponse resp = response.body();
+                Snackbar.make(getView(), resp.getMessage(), Snackbar.LENGTH_LONG).show();
+                progress.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(Call<ServerResponse> call, Throwable t) {
+
+                progress.setVisibility(View.INVISIBLE);
+                Log.d(Constants.TAG,"failed");
+                Snackbar.make(getView(), t.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
+
+
+            }
+        });
     }
 }
