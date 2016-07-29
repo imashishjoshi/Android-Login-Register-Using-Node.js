@@ -34,7 +34,10 @@ module.exports = {
 
 								if(!err){
 
-									res.json({message : 'User Registered'});
+									res.json({
+										message : 'User Registered',
+										result : 'ok'
+									});
 
 
 								}else{
